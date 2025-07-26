@@ -1,10 +1,9 @@
 .container {
-    --uib-size: 45px;
-    --uib-color: black;
+    --uib-size: 100px;
+    --uib-color: #0f172b;
     --uib-speed: 1.75s;
     display: flex;
     align-items: flex-end;
-    padding-bottom: 20%;
     justify-content: space-between;
     width: var(--uib-size);
     height: calc(var(--uib-size) * 0.6);

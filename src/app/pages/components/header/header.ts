@@ -14,10 +14,6 @@ export class Header {
             routerLink: '/upload-video',
         },
         {
-            name: 'Init Download',
-            routerLink: '/init-download',
-        },
-        {
             name: 'Download Video',
             routerLink: '/download-video',
         },

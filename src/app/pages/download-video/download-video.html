@@ -1,1 +1,131 @@
-<p>download-video works!</p>
+<div class="p-6 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6 text-center">Trình tải Video</h1>
+
+    <div class="flex justify-center gap-4 mb-6">
+        <button
+            (click)="initVideos()"
+            class="bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700 transition"
+        >
+            Init Video
+        </button>
+
+        <button
+            (click)="toggleDownload()"
+            [disabled]="isDisabled()"
+            [ngClass]="{
+                'bg-green-600 hover:bg-green-700': !isDownloading,
+                'bg-red-600 hover:bg-red-700': isDownloading,
+                'opacity-50 cursor-not-allowed':
+                    videos.length === 0 && isLoading == false
+            }"
+            class="text-white px-4 py-2 rounded-xl shadow flex items-center gap-2 transition"
+        >
+            @if(!isDownloading) {
+            <span>Start Download</span>
+            } @else {
+
+            <span>Stop Download</span>
+            }
+
+            <!-- Loading spinner -->
+            @if(isLoading) {
+            <svg
+                class="animate-spin h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+            >
+                <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                ></circle>
+                <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+            </svg>
+            }
+        </button>
+    </div>
+
+    @if(videos.length > 0) {
+    <div class="bg-white rounded-xl shadow p-4 mb-6">
+        <h2 class="text-lg font-semibold mb-2">Danh sách Video</h2>
+        <p class="mb-4 text-gray-600">
+            Sheet Name: <strong>{{ sheetName }}</strong>
+        </p>
+
+        <p class="mb-4 text-gray-600">
+            Dòng thứ <strong>{{ startRowInSheet }}</strong> bắt đầu Download trong Excel
+        </p>
+
+        <p class="mb-4 text-gray-600">
+            Tổng số video: <strong>{{ totalVideos }}</strong>
+        </p>
+
+        <div
+            class="bg-green-50 border border-green-200 text-green-800 rounded-xl p-4 shadow mb-2"
+        >
+            ✅ Tải thành công <strong>{{ downloadedCount }}</strong>
+        </div>
+
+        <div
+            class="bg-red-50 border border-red-200 text-red-800 rounded-xl p-4 shadow mb-2"
+        >
+            ❌ Tải thất bại <strong>{{ downloadedCount }}</strong>
+        </div>
+
+        @if(videos.length > 0) {
+        <div class="bg-white rounded-xl shadow p-4 mb-6">
+            <h2 class="text-lg font-semibold mb-4">
+                Danh sách Video (hiển thị 5 video đầu)
+            </h2>
+
+            <div class="overflow-x-auto">
+                <table
+                    class="min-w-full text-sm text-left text-gray-700 border"
+                >
+                    <thead class="bg-gray-100 text-xs uppercase text-gray-600">
+                        <tr>
+                            <th class="px-4 py-2 border">#</th>
+                            <th class="px-4 py-2 border">TransID</th>
+                            <th class="px-4 py-2 border">TransNB</th>
+                            <th class="px-4 py-2 border">TotalAmount</th>
+                            <th class="px-4 py-2 border">Payment</th>
+                            <th class="px-4 py-2 border">Label</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (video of videos; track $index) {
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2 border">{{ $index + 1 }}</td>
+                            <td class="px-4 py-2 border">
+                                {{ video.transID }}
+                            </td>
+                            <td class="px-4 py-2 border">
+                                {{ video.transNB }}
+                            </td>
+                            <td class="px-4 py-2 border">
+                                {{ video.totalAmount }}
+                            </td>
+                            <td class="px-4 py-2 border">
+                                {{ video.payment }}
+                            </td>
+                            <td class="px-4 py-2 border">
+                                {{ video.label }}
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

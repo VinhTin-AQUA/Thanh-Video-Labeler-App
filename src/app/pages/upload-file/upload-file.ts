@@ -22,6 +22,7 @@ export class UploadFile {
         const file = event.target.files?.[0];
         if (file) {
             this.selectedFile = file;
+            this.uploadFile(false);
         }
     }
 
@@ -34,14 +35,15 @@ export class UploadFile {
         const file = event.dataTransfer?.files?.[0];
         if (file) {
             this.selectedFile = file;
-            this.uploadFile();
+            this.uploadFile(false);
         }
     }
 
-    uploadFile() {
+
+    uploadFile(isAccepted: boolean) {
         showGlobalLoading();
         if (this.selectedFile) {
-            this.uploadService.upload(this.selectedFile, false).subscribe({
+            this.uploadService.upload(this.selectedFile, isAccepted).subscribe({
                 next: (res: any) => {
                     showGlobalDialog('Upload file', res.message, true);
                     hideGlobalLoading();
@@ -50,22 +52,6 @@ export class UploadFile {
                     if (err.error.data.isAccepted) {
                         this.isAccepted.set(err.error.data.isAccepted);
                     }
-                    showGlobalDialog('Upload file', err.error.message, false);
-                    hideGlobalLoading();
-                },
-            });
-        }
-    }
-
-    acceptUploadFile() {
-        showGlobalLoading();
-        if (this.selectedFile) {
-            this.uploadService.upload(this.selectedFile, true).subscribe({
-                next: (res: any) => {
-                    showGlobalDialog('Upload file', res.message, true);
-                    hideGlobalLoading();
-                },
-                error: (err) => {
                     showGlobalDialog('Upload file', err.error.message, false);
                     hideGlobalLoading();
                 },
