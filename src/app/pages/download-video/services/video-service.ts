@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
     providedIn: 'root',
@@ -9,6 +9,10 @@ export class VideoService {
     readonly baseUrl = environment.baseUrl;
 
     constructor(private http: HttpClient) {}
+
+    getRemainingVideos() {
+        return this.http.get(`${this.baseUrl}/video/GetRemainingVideos`);
+    }
 
     initVideo() {
         return this.http.post(`${this.baseUrl}/video/InitDownloadVideo`, {});

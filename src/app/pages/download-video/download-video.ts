@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
-import { VideoService } from './video-service';
+import { VideoService } from './services/video-service';
 import { showGlobalDialog } from '../../shared/signals/dialog-signal';
 import {
     hideGlobalLoading,
     showGlobalLoading,
 } from '../../shared/signals/loading-signal';
 import { VideoInfo } from './models/video-info';
+import { VideoHub } from './hubs/video-hub';
+import { resultDownloadVideoSignal } from './signal/total-result-signal';
 
 @Component({
     selector: 'app-download-video',
@@ -15,20 +17,43 @@ import { VideoInfo } from './models/video-info';
     styleUrl: './download-video.scss',
 })
 export class DownloadVideo {
-    videos: VideoInfo[] = [];
     totalVideos: number = 0;
-    downloadedCount: number = 0;
-
     isDownloading: boolean = false;
     isLoading: boolean = false;
-    downloadInterval: any;
-    inited = signal<boolean>(false);
-    isDisabled = computed(() => this.videos.length === 0 && !this.isLoading);
     sheetName: string = '';
     startRowInSheet: number = 1;
+    resultDownloadVideoSignal = computed(() => resultDownloadVideoSignal());
+    videos = signal<VideoInfo[]>([]);
 
+    constructor(
+        private videoService: VideoService,
+        private videoSignalService: VideoHub
+    ) {}
 
-    constructor(private videoService: VideoService) {}
+    ngOnInit(): void {
+        this.videoSignalService.startConnection();
+        this.getRemainingVideos();
+    }
+
+    getRemainingVideos() {
+        showGlobalLoading();
+        this.videoService.getRemainingVideos().subscribe({
+            next: (res: any) => {
+                hideGlobalLoading();
+                if (res.data.total <= 0) {
+                    return;
+                }
+
+                this.videos.set(res.data.listVideo);
+                this.totalVideos = res.data.total;
+                this.sheetName = res.data.sheetName;
+                this.startRowInSheet = res.data.startRowInSheet;
+            },
+            error: (err) => {
+                hideGlobalLoading();
+            },
+        });
+    }
 
     initVideos() {
         showGlobalLoading();
@@ -36,10 +61,10 @@ export class DownloadVideo {
             next: (res: any) => {
                 showGlobalDialog('Init download', res.message, true);
 
-                this.videos = res.data.listNewVideo;
+                this.videos.set(res.data.listNewVideo);
                 this.totalVideos = res.data.total;
-                this.downloadedCount = 0;
                 this.sheetName = res.data.sheetName;
+
                 this.startRowInSheet = res.data.startRowInSheet;
                 hideGlobalLoading();
             },
@@ -50,35 +75,46 @@ export class DownloadVideo {
         });
     }
 
+    // stop
     toggleDownload() {
         if (this.isDownloading) {
             // Giả lập stop
-            clearInterval(this.downloadInterval);
+
             this.isDownloading = false;
             this.isLoading = false;
-            return;
-        }
 
-        this.startDownload();
+            this.videoService.stopDownloadVideo().subscribe({
+                next: (res: any) => {
+                    showGlobalDialog('Stop Dowload', res.message, true);
+                },
+                error: (err) => {
+                    showGlobalDialog('Stop Dowload', err.error.message, false);
+                },
+            });
+        } else {
+            this.startDownload();
+        }
     }
 
+    // download
     startDownload() {
         this.isDownloading = true;
         this.isLoading = true;
 
-        let count = 0;
-        this.downloadedCount = 0;
+        this.videoService.startDownloadVideo().subscribe({
+            next: (res: any) => {
+                showGlobalDialog('Dowload', res.message, true);
+            },
+            error: (err) => {
+                showGlobalDialog('Dowload', err.error.message, false);
+            },
+        });
+    }
 
-        // Giả lập tải video mỗi 200ms
-        this.downloadInterval = setInterval(() => {
-            if (count >= this.totalVideos) {
-                clearInterval(this.downloadInterval);
-                this.isDownloading = false;
-                this.isLoading = false;
-            } else {
-                this.downloadedCount++;
-                count++;
-            }
-        }, 200);
+    copyToClipboard(text: string) {
+        navigator.clipboard
+            .writeText(text)
+            .then(() => {})
+            .catch((err) => {});
     }
 }

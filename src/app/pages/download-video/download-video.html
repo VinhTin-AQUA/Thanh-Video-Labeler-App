@@ -1,4 +1,4 @@
-<div class="p-6 max-w-4xl mx-auto">
+<div class="p-6 container mx-auto">
     <h1 class="text-2xl font-bold mb-6 text-center">Trình tải Video</h1>
 
     <div class="flex justify-center gap-4 mb-6">
@@ -11,12 +11,12 @@
 
         <button
             (click)="toggleDownload()"
-            [disabled]="isDisabled()"
+            [disabled]="videos().length === 0 && !this.isLoading"
             [ngClass]="{
                 'bg-green-600 hover:bg-green-700': !isDownloading,
                 'bg-red-600 hover:bg-red-700': isDownloading,
                 'opacity-50 cursor-not-allowed':
-                    videos.length === 0 && isLoading == false
+                    videos().length === 0 && isLoading == false
             }"
             class="text-white px-4 py-2 rounded-xl shadow flex items-center gap-2 transition"
         >
@@ -53,7 +53,7 @@
         </button>
     </div>
 
-    @if(videos.length > 0) {
+    @if(videos().length > 0) {
     <div class="bg-white rounded-xl shadow p-4 mb-6">
         <h2 class="text-lg font-semibold mb-2">Danh sách Video</h2>
         <p class="mb-4 text-gray-600">
@@ -61,7 +61,8 @@
         </p>
 
         <p class="mb-4 text-gray-600">
-            Dòng thứ <strong>{{ startRowInSheet }}</strong> bắt đầu Download trong Excel
+            Dòng thứ <strong>{{ startRowInSheet }}</strong> bắt đầu Download
+            trong Excel
         </p>
 
         <p class="mb-4 text-gray-600">
@@ -71,16 +72,79 @@
         <div
             class="bg-green-50 border border-green-200 text-green-800 rounded-xl p-4 shadow mb-2"
         >
-            ✅ Tải thành công <strong>{{ downloadedCount }}</strong>
+            ✅ Tải thành công
+            <strong>{{
+                resultDownloadVideoSignal().totalDownloadsSuccess
+            }}</strong>
         </div>
 
         <div
-            class="bg-red-50 border border-red-200 text-red-800 rounded-xl p-4 shadow mb-2"
+            class="border border-red-200 text-red-800 rounded-xl p-4 shadow mb-2"
         >
-            ❌ Tải thất bại <strong>{{ downloadedCount }}</strong>
+            ❌ Tải thất bại
+            <strong>{{
+                resultDownloadVideoSignal().totalDownloadsFailed
+            }}</strong>
+
+            @if (resultDownloadVideoSignal().downloadVideoErrors.length > 0) {
+
+            <div class="overflow-x-auto max-h-64">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th
+                                class="sticky top-0 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                #
+                            </th>
+                            <th
+                                class="sticky top-0 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                TransID
+                            </th>
+                            <th
+                                class="sticky top-0 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Link
+                            </th>
+
+                            <th
+                                class="sticky top-0 bg-gray-100 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            ></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @for (errorVideo of
+                        resultDownloadVideoSignal().downloadVideoErrors; track
+                        $index) {
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ $index + 1 }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ errorVideo.transId }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ errorVideo.link }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <button
+                                    (click)="copyToClipboard(errorVideo.link)"
+                                    type="button"
+                                    class="text-white bg-yellow-400 hover:bg-yellow-500 rounded-md text-sm px-5 py-2.5 text-center"
+                                >
+                                    Copy Link
+                                </button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            }
         </div>
 
-        @if(videos.length > 0) {
         <div class="bg-white rounded-xl shadow p-4 mb-6">
             <h2 class="text-lg font-semibold mb-4">
                 Danh sách Video (hiển thị 5 video đầu)
@@ -101,7 +165,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for (video of videos; track $index) {
+                        @for (video of videos(); track $index) {
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-2 border">{{ $index + 1 }}</td>
                             <td class="px-4 py-2 border">
@@ -125,7 +189,6 @@
                 </table>
             </div>
         </div>
-        }
     </div>
     }
 </div>

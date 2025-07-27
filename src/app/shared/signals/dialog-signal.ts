@@ -7,7 +7,7 @@ export interface DialogData {
   message: string;
   isSuccess: boolean;
   visible: boolean;
-  timeoutId?: number;
+//   timeoutId?: number;
 }
 
 export const dialogSignal = signal<DialogData>({
@@ -23,8 +23,8 @@ export function showGlobalDialog(
   isSuccess: boolean
 ) {
   // Clear any previous timeout
-  const prevTimeout = dialogSignal().timeoutId;
-  if (prevTimeout) clearTimeout(prevTimeout);
+//   const prevTimeout = dialogSignal().timeoutId;
+//   if (prevTimeout) clearTimeout(prevTimeout);
 
   const timeoutId = window.setTimeout(() => hideGlobalDialog(), 10000);
 
@@ -33,17 +33,17 @@ export function showGlobalDialog(
     message,
     isSuccess: isSuccess,
     visible: true,
-    timeoutId
+    // timeoutId
   });
 }
 
 export function hideGlobalDialog() {
-  const prevTimeout = dialogSignal().timeoutId;
-  if (prevTimeout) clearTimeout(prevTimeout);
+//   const prevTimeout = dialogSignal().timeoutId;
+//   if (prevTimeout) clearTimeout(prevTimeout);    
 
   dialogSignal.set({
     ...dialogSignal(),
     visible: false,
-    timeoutId: undefined
+    // timeoutId: undefined
   });
 }
