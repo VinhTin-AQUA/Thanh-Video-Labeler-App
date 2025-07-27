@@ -18,8 +18,10 @@ import { resultDownloadVideoSignal } from './signal/total-result-signal';
 })
 export class DownloadVideo {
     totalVideos: number = 0;
-    isDownloading: boolean = false;
-    isLoading: boolean = false;
+
+    isDownloading = signal<boolean>(false);
+    isLoading = signal<boolean>(false);
+
     sheetName: string = '';
     startRowInSheet: number = 1;
     resultDownloadVideoSignal = computed(() => resultDownloadVideoSignal());
@@ -27,12 +29,20 @@ export class DownloadVideo {
 
     constructor(
         private videoService: VideoService,
-        private videoSignalService: VideoHub
+        private videoHub: VideoHub
     ) {}
 
     ngOnInit(): void {
-        this.videoSignalService.startConnection();
+        this.videoHub.startConnection();
         this.getRemainingVideos();
+
+        if (this.videoHub.hubConnection) {
+            this.videoHub.hubConnection.on('SendDownloadFinish', (isFinish) => {
+                console.log(isFinish);
+                this.updateLoading(false);
+                showGlobalDialog('Dowload', 'Dowload Successfully', true);
+            });
+        }
     }
 
     getRemainingVideos() {
@@ -77,12 +87,8 @@ export class DownloadVideo {
 
     // stop
     toggleDownload() {
-        if (this.isDownloading) {
-            // Giả lập stop
-
-            this.isDownloading = false;
-            this.isLoading = false;
-
+        if (this.isDownloading()) {
+            this.updateLoading(false);
             this.videoService.stopDownloadVideo().subscribe({
                 next: (res: any) => {
                     showGlobalDialog('Stop Dowload', res.message, true);
@@ -98,11 +104,13 @@ export class DownloadVideo {
 
     // download
     startDownload() {
-        this.isDownloading = true;
-        this.isLoading = true;
+        this.updateLoading(true);
 
         this.videoService.startDownloadVideo().subscribe({
             next: (res: any) => {
+                if (res.data) {
+                    this.updateLoading(false);
+                }
                 showGlobalDialog('Dowload', res.message, true);
             },
             error: (err) => {
@@ -116,5 +124,14 @@ export class DownloadVideo {
             .writeText(text)
             .then(() => {})
             .catch((err) => {});
+    }
+
+    private updateLoading(loading: boolean) {
+        this.isDownloading.update((x: boolean) => {
+            return loading;
+        });
+        this.isLoading.update((x: boolean) => {
+            return loading;
+        });
     }
 }

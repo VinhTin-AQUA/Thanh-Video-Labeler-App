@@ -8,7 +8,7 @@ import { updateDownloadVideoResult } from '../signal/total-result-signal';
     providedIn: 'root',
 })
 export class VideoHub {
-    private hubConnection?: signalR.HubConnection;
+    hubConnection?: signalR.HubConnection;
     public receivedMessage: string = '';
     videoDowloadHubUrl: string = environment.videoDowloadHubUrl;
 
@@ -28,7 +28,7 @@ export class VideoHub {
             );
 
         this.hubConnection.on(
-            'RecieveTotalVideo',
+            'RecieveResultDownloadVideo',
             (result: ResultDownloadVideo) => {
                 updateDownloadVideoResult(result);
             }

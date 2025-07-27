@@ -11,16 +11,16 @@
 
         <button
             (click)="toggleDownload()"
-            [disabled]="videos().length === 0 && !this.isLoading"
+            [disabled]="videos().length === 0 && this.isLoading() === false"
             [ngClass]="{
-                'bg-green-600 hover:bg-green-700': !isDownloading,
-                'bg-red-600 hover:bg-red-700': isDownloading,
+                'bg-green-600 hover:bg-green-700': !isDownloading(),
+                'bg-red-600 hover:bg-red-700': isDownloading(),
                 'opacity-50 cursor-not-allowed':
-                    videos().length === 0 && isLoading == false
+                    videos().length === 0 && isLoading() === false
             }"
             class="text-white px-4 py-2 rounded-xl shadow flex items-center gap-2 transition"
         >
-            @if(!isDownloading) {
+            @if(!isDownloading()) {
             <span>Start Download</span>
             } @else {
 
@@ -28,7 +28,7 @@
             }
 
             <!-- Loading spinner -->
-            @if(isLoading) {
+            @if(isLoading()) {
             <svg
                 class="animate-spin h-4 w-4 text-white"
                 xmlns="http://www.w3.org/2000/svg"
