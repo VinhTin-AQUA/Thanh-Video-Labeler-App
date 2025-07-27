@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { Header } from './pages/components/header/header';
+import { Header } from './shared/components/header/header';
 import { GlobalLoading } from './shared/components/global-loading/global-loading';
 import { GlobalDialog } from './shared/components/global-dialog/global-dialog';
 import { HealthService } from './shared/services/health-service';
@@ -22,18 +22,18 @@ export class App {
     ) {}
 
     ngOnInit() {
-        this.healthService.ping().subscribe({
-            next: (_) => {
-                this.router.navigateByUrl('/');
-            },
-            error: (_) => {
-                this.router.navigateByUrl('/server-down');
-            },
-        });
+        // this.healthService.ping().subscribe({
+        //     next: (_) => {
+        //         this.router.navigateByUrl('/');
+        //     },
+        //     error: (_) => {
+        //         this.router.navigateByUrl('/server-down');
+        //     },
+        // });
 
-        this.videoService.stopDownloadVideo().subscribe({
-            next: (_) => {},
-            error: (_) => {},
-        });
+        // this.videoService.stopDownloadVideo().subscribe({
+        //     next: (_) => {},
+        //     error: (_) => {},
+        // });
     }
 }

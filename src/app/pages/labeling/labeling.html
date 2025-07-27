@@ -1,1 +1,132 @@
-<p>labeling works!</p>
+<div class="min-h-screen bg-gray-100 p-6">
+    <!-- Filter Section -->
+    <div
+        class="bg-white p-4 rounded-2xl shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4"
+    >
+        <input
+            type="text"
+            [(ngModel)]="filters.transIdOrPayment"
+            placeholder="TransId or Payment"
+            class="border border-gray-300 rounded-lg p-2 w-full"
+        />
+        <label class="flex items-center space-x-2">
+            <input type="checkbox" [(ngModel)]="filters.label" />
+            <span>Label</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="checkbox" [(ngModel)]="filters.noLabel" />
+            <span>Chưa Label</span>
+        </label>
+
+        <button
+            type="button"
+            (click)="applyFilter()"
+            class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+        >
+            ApplyFilter
+        </button>
+    </div>
+
+    <!-- Item List Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (item of videos(); track $index) {
+        <div class="bg-white p-4 rounded-2xl shadow">
+            <div
+                class="flex md:items-center justify-between flex-col md:flex-row"
+            >
+                <div class="flex-1">
+                    <div class="font-semibold text-lg">
+                        TransId: {{ item.transID }}
+                    </div>
+                    <div class="text-gray-600">Payment: {{ item.payment }}</div>
+                    <div class="mt-2">
+                        @if (item.label) {
+                        <div>
+                            <span class="font-bold">Label: </span>
+                            <span class="px-2 py-1 text-green-800 text-md">{{
+                                item.label
+                            }}</span>
+                        </div>
+                        } @else {
+                        <span
+                            class="px-2 py-1 bg-red-100 text-red-800 rounded-sm text-md"
+                            >Chưa Label</span
+                        >
+                        }
+                    </div>
+
+                    <div class="mt-2">
+                        <div>
+                            <span class="font-bold">Downloaded: </span>
+
+                            @if(item.videoStatus === 0) {
+                            <span
+                                class="bg-yellow-100 rounded-sm px-2 py-1 text-yellow-800 text-md"
+                                >Chưa tải</span
+                            >
+                            } @else if (item.videoStatus === 1) {
+                            <span
+                                class="bg-green-100 rounded-sm px-2 py-1 text-green-800 text-md"
+                                >Tải hoàn tất</span
+                            >
+                            } @else {
+                            <span
+                                class="bg-red-100 rounded-sm px-2 py-1 text-red-800 text-md"
+                                >Không thể tải</span
+                            >
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <button
+                        (click)="openVideoModal(item)"
+                        type="button"
+                        class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 md:m-0"
+                    >
+                        Details
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center mt-6 space-x-2">
+        <button
+            (click)="prevPage()"
+            [disabled]="filters.page === 1"
+            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+        >
+            Trước
+        </button>
+        <span class="px-4 py-2">Trang {{ filters.page }}</span>
+        <button
+            (click)="nextPage()"
+            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+        >
+            Sau
+        </button>
+    </div>
+</div>
+
+<!-- Modal hiển thị VideoInfo -->
+@if(selectedVideo) {
+<div
+    class="fixed top-0 left-0 p-10 w-full h-screen bg-gray-600/40 overflow-y-auto"
+>
+    <div class="relative max-1/2 mx-auto bg-white rounded-xl p-4">
+        <button
+            class="absolute top-3 right-3 text-gray-500 hover:text-black text-2xl"
+            (click)="closeModal()"
+        >
+            ✖
+        </button>
+        <app-labeling-details
+            [videoInfo]="selectedVideo"
+        ></app-labeling-details>
+    </div>
+</div>
+}
