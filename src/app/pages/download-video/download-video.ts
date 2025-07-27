@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
-import { VideoService } from './services/video-service';
+import { DownloadVideoService } from './services/download-video-service';
 import { showGlobalDialog } from '../../shared/signals/dialog-signal';
 import {
     hideGlobalLoading,
@@ -28,7 +28,7 @@ export class DownloadVideo {
     videos = signal<VideoInfo[]>([]);
 
     constructor(
-        private videoService: VideoService,
+        private videoService: DownloadVideoService,
         private videoHub: VideoHub
     ) {}
 

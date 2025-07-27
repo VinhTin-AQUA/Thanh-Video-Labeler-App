@@ -4,7 +4,7 @@ import { Header } from './shared/components/header/header';
 import { GlobalLoading } from './shared/components/global-loading/global-loading';
 import { GlobalDialog } from './shared/components/global-dialog/global-dialog';
 import { HealthService } from './shared/services/health-service';
-import { VideoService } from './pages/download-video/services/video-service';
+import { DownloadVideoService } from './pages/download-video/services/download-video-service';
 
 @Component({
     selector: 'app-root',
@@ -18,7 +18,7 @@ export class App {
     constructor(
         private healthService: HealthService,
         private router: Router,
-        private videoService: VideoService
+        private videoService: DownloadVideoService
     ) {}
 
     ngOnInit() {

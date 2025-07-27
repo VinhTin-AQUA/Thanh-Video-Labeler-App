@@ -5,7 +5,7 @@ import { environment } from '../../../../environments/environment.development';
 @Injectable({
     providedIn: 'root',
 })
-export class VideoService {
+export class DownloadVideoService {
     readonly baseUrl = environment.baseUrl;
 
     constructor(private http: HttpClient) {}
