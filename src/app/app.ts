@@ -1,8 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { Header } from './pages/components/header/header';
-import { GlobalLoading } from "./shared/components/global-loading/global-loading";
-import { GlobalDialog } from "./shared/components/global-dialog/global-dialog";
+import { GlobalLoading } from './shared/components/global-loading/global-loading';
+import { GlobalDialog } from './shared/components/global-dialog/global-dialog';
+import { HealthService } from './shared/services/health-service';
 
 @Component({
     selector: 'app-root',
@@ -12,4 +13,17 @@ import { GlobalDialog } from "./shared/components/global-dialog/global-dialog";
 })
 export class App {
     protected readonly title = signal('ExcelVideoLabelerApp');
+
+    constructor(private healthService: HealthService, private router: Router) {}
+
+    ngOnInit() {
+        this.healthService.ping().subscribe({
+            next: (_) => {
+                this.router.navigateByUrl('/');
+            },
+            error: (_) => {
+                this.router.navigateByUrl('/server-down');
+            },
+        });
+    }
 }
