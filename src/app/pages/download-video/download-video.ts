@@ -27,6 +27,11 @@ export class DownloadVideo {
     resultDownloadVideoSignal = computed(() => resultDownloadVideoSignal());
     videos = signal<VideoInfo[]>([]);
 
+    // dropdown
+    isOpenDropdown = false;
+    sheetIndexSelected: string | null = null;
+    sheeNames = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
+
     constructor(
         private videoService: DownloadVideoService,
         private videoHub: VideoHub
@@ -126,12 +131,22 @@ export class DownloadVideo {
             .catch((err) => {});
     }
 
-    private updateLoading(loading: boolean) {
+    updateLoading(loading: boolean) {
         this.isDownloading.update((x: boolean) => {
             return loading;
         });
         this.isLoading.update((x: boolean) => {
             return loading;
         });
+    }
+
+    // sheet dropdown
+    toggleDropdown() {
+        this.isOpenDropdown = !this.isOpenDropdown;
+    }
+
+    selectOption(option: string) {
+        this.sheetIndexSelected = option;
+        this.isOpenDropdown = false;
     }
 }

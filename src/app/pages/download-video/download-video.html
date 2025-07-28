@@ -1,7 +1,43 @@
 <div class="p-6 container mx-auto">
     <h1 class="text-2xl font-bold mb-6 text-center">Init and download video</h1>
 
-    <div class="flex justify-center gap-4 mb-6">
+    <div class="flex justify-center items-center gap-4 mb-6">
+        <span>Select Sheet</span>
+        <div class="relative inline-block w-64">
+            <button
+                (click)="toggleDropdown()"
+                class="w-full bg-white border border-gray-300 rounded px-4 py-2 text-left flex justify-between items-center shadow-sm hover:border-gray-400"
+            >
+                {{ sheetIndexSelected || "Chọn một mục" }}
+                <svg
+                    class="w-4 h-4 ml-2 transform"
+                    [class.rotate-180]="isOpenDropdown"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            @if(isOpenDropdown) {
+            <ul
+                class="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let sheet of sheeNames"
+                    (click)="selectOption(sheet)"
+                    class="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                    [class.bg-blue-50]="sheet === sheetIndexSelected"
+                >
+                    {{ sheet }}
+                </li>
+            </ul>
+            }
+        </div>
+
         <button
             (click)="initVideos()"
             class="bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700 transition"
@@ -145,9 +181,7 @@
         </div>
 
         <div class="bg-white rounded-xl shadow p-4 mb-6">
-            <h2 class="text-lg font-semibold mb-4">
-                Videos (first 5 videos)
-            </h2>
+            <h2 class="text-lg font-semibold mb-4">Videos (first 5 videos)</h2>
 
             <div class="overflow-x-auto">
                 <table
