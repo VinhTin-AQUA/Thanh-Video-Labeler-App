@@ -1,28 +1,47 @@
-<div
-    class="flex flex-col lg:flex-row gap-4 rounded-xl bg-white md:p-10 "
->
+<div class="flex flex-col lg:flex-row gap-4 rounded-xl bg-white md:p-10">
     <!-- Left column: Video + controls -->
     <div class="lg:w-1/2 bg-white rounded-2xl shadow p-4">
         <h2 class="text-xl font-semibold mb-4 text-gray-800">Video</h2>
         <div class="aspect-video bg-black rounded-md overflow-hidden mb-4">
             <!-- Replace with actual video player -->
             <video #videoPlayer controls class="w-full h-full">
-                <source [src]="videoUrl + '/' + videoInfo.transID + '.mp4'" type="video/mp4" />
+                <source
+                    [src]="videoUrl + '/' + videoInfo.transID + '.mp4'"
+                    type="video/mp4"
+                />
                 Your browser does not support the video tag.
             </video>
         </div>
-        <div class="flex items-center justify-between gap-2">
-            <!-- <button
+        <div class="flex items-center justify-end gap-2">
+            <button
+                (click)="onPrevClick()"
                 class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition"
             >
-                ⏯️ Play / Pause
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="M6 6v12h2V6H6zm3.5 6 8.5 6V6l-8.5 6z" />
+                </svg>
             </button>
             <button
-                class="bg-gray-300 px-4 py-2 rounded-xl hover:bg-gray-400 transition"
+                (click)="onNextClick()"
+                class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-gray-400 transition"
             >
-                🔁 Reload
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="M16 6v12h-2V6h2zm-3.5 6-8.5 6V6l8.5 6z" />
+                </svg>
             </button>
-            <button
+            <!-- <button
                 class="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600 transition"
             >
                 ❌ Close

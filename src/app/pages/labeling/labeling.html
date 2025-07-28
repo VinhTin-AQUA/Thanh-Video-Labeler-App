@@ -36,7 +36,9 @@
     </div>
 
     <!-- Item List Section -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+    >
         @for (item of videos(); track $index) {
         <div class="bg-white p-4 rounded-2xl shadow">
             <div
@@ -133,17 +135,17 @@
             ✖
         </button>
         <app-labeling-details
+            (nextVideo)="onNext()"
+            (prevVideo)="onPrev()"
             [videoInfo]="selectedVideo"
         ></app-labeling-details>
     </div>
 </div>
 }
 
-<!-- Popup Overlay -->
+<!-- Popup export excel -->
 @if(showPopup) {
-<div
-    class="fixed inset-0 flex justify-center items-center z-50 bg-gray-500/40"
->
+<div class="fixed inset-0 flex justify-center items-center z-50 bg-gray-500/40">
     <!-- Popup Box -->
     <div class="bg-white p-6 rounded-lg shadow-md w-96">
         <h2 class="text-xl font-semibold mb-4">Export excel</h2>
