@@ -1,5 +1,5 @@
 <div class="p-6 container mx-auto">
-    <h1 class="text-2xl font-bold mb-6 text-center">Trình tải Video</h1>
+    <h1 class="text-2xl font-bold mb-6 text-center">Init and download video</h1>
 
     <div class="flex justify-center gap-4 mb-6">
         <button
@@ -55,24 +55,23 @@
 
     @if(videos().length > 0) {
     <div class="bg-white rounded-xl shadow p-4 mb-6">
-        <h2 class="text-lg font-semibold mb-2">Danh sách Video</h2>
+        <h2 class="text-lg font-semibold mb-2">Information</h2>
         <p class="mb-4 text-gray-600">
-            Sheet Name: <strong>{{ sheetName }}</strong>
+            Sheet name: <strong>{{ sheetName }}</strong>
         </p>
 
         <p class="mb-4 text-gray-600">
-            Dòng thứ <strong>{{ startRowInSheet }}</strong> bắt đầu Download
-            trong Excel
+            Start row: <strong>{{ startRowInSheet }}</strong> to download
         </p>
 
         <p class="mb-4 text-gray-600">
-            Tổng số video: <strong>{{ totalVideos }}</strong>
+            Total videos to download: <strong>{{ totalVideos }}</strong>
         </p>
 
         <div
             class="bg-green-50 border border-green-200 text-green-800 rounded-xl p-4 shadow mb-2"
         >
-            ✅ Tải thành công
+            ✅ Download successfully
             <strong>{{
                 resultDownloadVideoSignal().totalDownloadsSuccess
             }}</strong>
@@ -81,7 +80,7 @@
         <div
             class="border border-red-200 text-red-800 rounded-xl p-4 shadow mb-2"
         >
-            ❌ Tải thất bại
+            ❌ Download failed
             <strong>{{
                 resultDownloadVideoSignal().totalDownloadsFailed
             }}</strong>
@@ -147,7 +146,7 @@
 
         <div class="bg-white rounded-xl shadow p-4 mb-6">
             <h2 class="text-lg font-semibold mb-4">
-                Danh sách Video (hiển thị 5 video đầu)
+                Videos (first 5 videos)
             </h2>
 
             <div class="overflow-x-auto">

@@ -5,16 +5,22 @@ import {
     hideGlobalLoading,
     showGlobalLoading,
 } from '../../shared/signals/loading-signal';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-settings',
-    imports: [],
+    imports: [FormsModule],
     templateUrl: './settings.html',
     styleUrl: './settings.scss',
 })
 export class Settings {
     excelFileName = signal<string>('video_123.mp4');
     sheetName = signal<string>('data_report.json');
+
+    isRemoveExcefile = signal<boolean>(false);
+    isRemoveDb = signal<boolean>(false);
+    isRemoveVideosAndTxt = signal<boolean>(false);
+    openModal = false;
 
     constructor(private settingService: SettingService) {}
 
@@ -41,8 +47,8 @@ export class Settings {
         showGlobalLoading();
         this.settingService.resetData().subscribe({
             next: (res: any) => {
-                this.excelFileName.update((x) => 'Chưa có');
-                this.sheetName.update((x) => 'Chưa có');
+                this.excelFileName.update((x) => 'Nothing');
+                this.sheetName.update((x) => 'Nothing');
                 showGlobalDialog('Reset data', res.message, true);
                 hideGlobalLoading();
             },

@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-100 p-6">
     <!-- Filter Section -->
     <div
-        class="bg-white p-4 rounded-2xl shadow mb-6 grid grid-cols-1 md:grid-cols-5 gap-4"
+        class="md:text-sm lg:text-xl bg-white p-4 rounded-2xl shadow mb-6 grid grid-cols-1 md:grid-cols-5 gap-4"
     >
         <input
             type="text"
@@ -10,18 +10,18 @@
             class="border border-gray-300 rounded-lg p-2 w-full"
         />
         <label class="flex items-center space-x-2">
-            <input type="checkbox" [(ngModel)]="filters.label" />
-            <span>Label</span>
+            <input class="scale-150 accent-red-600 " type="checkbox" [(ngModel)]="filters.label" />
+            <span>Labeled</span>
         </label>
         <label class="flex items-center space-x-2">
-            <input type="checkbox" [(ngModel)]="filters.noLabel" />
-            <span>Chưa Label</span>
+            <input class="scale-150 accent-red-600 " type="checkbox" [(ngModel)]="filters.noLabel" />
+            <span>Unlabeled</span>
         </label>
 
         <button
             type="button"
             (click)="applyFilter()"
-            class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+            class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg px-5 py-2.5 me-2 mb-2"
         >
             ApplyFilter
         </button>
@@ -29,7 +29,7 @@
         <button
             type="button"
             (click)="openExportExcelPopup()"
-            class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+            class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg px-5 py-2.5 me-2 mb-2"
         >
             Export excel
         </button>
@@ -40,12 +40,12 @@
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
     >
         @for (item of videos(); track $index) {
-        <div class="bg-white p-4 rounded-2xl shadow">
+        <div class="bg-white p-4 rounded-2xl shadow sm:text-sm md:text-[1.15rem] xl:text-[1.2rem]">
             <div
-                class="flex md:items-center justify-between flex-col md:flex-row"
+                class="flex xl:items-center justify-between xl:justify-between flex-col xl:flex-row"
             >
                 <div class="flex-1">
-                    <div class="font-semibold text-lg">
+                    <div class="font-semibold ">
                         TransId: {{ item.transID }}
                     </div>
                     <div class="text-gray-600">Payment: {{ item.payment }}</div>
@@ -53,14 +53,14 @@
                         @if (item.label) {
                         <div>
                             <span class="font-bold">Label: </span>
-                            <span class="px-2 py-1 text-green-800 text-md">{{
+                            <span class="px-2 py-1 text-green-800">{{
                                 item.label
                             }}</span>
                         </div>
                         } @else {
                         <span
                             class="px-2 py-1 bg-red-100 text-red-800 rounded-sm text-md"
-                            >Chưa Label</span
+                            >Unlabeled</span
                         >
                         }
                     </div>
@@ -71,29 +71,29 @@
 
                             @if(item.videoStatus === 0) {
                             <span
-                                class="bg-yellow-100 rounded-sm px-2 py-1 text-yellow-800 text-md"
-                                >Chưa tải</span
+                                class="clamp bg-yellow-100 rounded-sm px-2 py-1 text-yellow-800 text-md"
+                                >Not downloaded yet</span
                             >
                             } @else if (item.videoStatus === 1) {
                             <span
-                                class="bg-green-100 rounded-sm px-2 py-1 text-green-800 text-md"
-                                >Tải hoàn tất</span
+                                class="clamp bg-green-100 rounded-sm px-2 py-1 text-green-800 text-md"
+                                >Downloaded</span
                             >
                             } @else {
                             <span
-                                class="bg-red-100 rounded-sm px-2 py-1 text-red-800 text-md"
-                                >Không thể tải</span
+                                class="clamp bg-red-100 rounded-sm px-2 py-1 text-red-800 text-md"
+                                >Cannot download</span
                             >
                             }
                         </div>
                     </div>
                 </div>
 
-                <div>
+                <div class="mt-2 xl:mt-0">
                     <button
                         (click)="openVideoModal(item)"
                         type="button"
-                        class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 md:m-0"
+                        class="w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg px-5 py-2.5 mt-2 md:m-0"
                     >
                         Details
                     </button>
