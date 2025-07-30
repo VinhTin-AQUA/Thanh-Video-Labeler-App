@@ -8,7 +8,7 @@
                 (click)="toggleDropdown()"
                 class="w-full bg-white border border-gray-300 rounded px-4 py-2 text-left flex justify-between items-center shadow-sm hover:border-gray-400"
             >
-                {{ sheetIndexSelected || "Chọn một mục" }}
+                {{ seletectedSheet().sheetName }}
                 <svg
                     class="w-4 h-4 ml-2 transform"
                     [class.rotate-180]="isOpenDropdown"
@@ -26,14 +26,17 @@
             <ul
                 class="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto"
             >
+                @for (sheet of sheets(); track $index) {
                 <li
-                    *ngFor="let sheet of sheeNames"
                     (click)="selectOption(sheet)"
                     class="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-                    [class.bg-blue-50]="sheet === sheetIndexSelected"
+                    [class.bg-blue-50]="
+                        sheet.sheetCode === seletectedSheet().sheetCode
+                    "
                 >
-                    {{ sheet }}
+                    {{ sheet.sheetName }}
                 </li>
+                }
             </ul>
             }
         </div>
@@ -44,15 +47,28 @@
         >
             Init Video
         </button>
+    </div>
+
+    <div class="flex justify-center items-center gap-4 mb-6">
+        <span>Total to download</span>
+        <div class="w-32">
+            <input
+                [(ngModel)]="totalToDownload"
+                type="number"
+                class="w-full bg-white border border-gray-300 rounded px-4 py-2 text-left flex justify-between items-center shadow-sm hover:border-gray-400"
+            />
+        </div>
 
         <button
             (click)="toggleDownload()"
-            [disabled]="videos().length === 0 && this.isLoading() === false"
+            [disabled]="
+                sampleVideos().length === 0 && this.isLoading() === false
+            "
             [ngClass]="{
                 'bg-green-600 hover:bg-green-700': !isDownloading(),
                 'bg-red-600 hover:bg-red-700': isDownloading(),
                 'opacity-50 cursor-not-allowed':
-                    videos().length === 0 && isLoading() === false
+                    sampleVideos().length === 0 && isLoading() === false
             }"
             class="text-white px-4 py-2 rounded-xl shadow flex items-center gap-2 transition"
         >
@@ -89,19 +105,26 @@
         </button>
     </div>
 
-    @if(videos().length > 0) {
+    @if(sampleVideos().length > 0) {
     <div class="bg-white rounded-xl shadow p-4 mb-6">
         <h2 class="text-lg font-semibold mb-2">Information</h2>
         <p class="mb-4 text-gray-600">
-            Sheet name: <strong>{{ sheetName }}</strong>
+            Sheet name: <strong>{{ seletectedSheet().sheetName }}</strong>
         </p>
 
         <p class="mb-4 text-gray-600">
-            Start row: <strong>{{ startRowInSheet }}</strong> to download
+            Total videos to download:
+            <strong>{{ pendingTotalVideos() }}</strong>
         </p>
 
         <p class="mb-4 text-gray-600">
-            Total videos to download: <strong>{{ totalVideos }}</strong>
+            Total downloaded videos:
+            <strong>{{ downloadedTotalVideos() }}</strong>
+        </p>
+
+        <p class="mb-4 text-gray-600">
+            Total error link videos:
+            <strong>{{ errorLinkTotalVideos() }}</strong>
         </p>
 
         <div
@@ -198,7 +221,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for (video of videos(); track $index) {
+                        @for (video of sampleVideos(); track $index) {
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-2 border">{{ $index + 1 }}</td>
                             <td class="px-4 py-2 border">

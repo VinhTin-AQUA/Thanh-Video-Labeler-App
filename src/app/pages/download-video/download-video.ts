@@ -9,28 +9,32 @@ import {
 import { VideoInfo } from './models/video-info';
 import { VideoHub } from './hubs/video-hub';
 import { resultDownloadVideoSignal } from './signal/total-result-signal';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-download-video',
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './download-video.html',
     styleUrl: './download-video.scss',
 })
 export class DownloadVideo {
-    totalVideos: number = 0;
-
     isDownloading = signal<boolean>(false);
     isLoading = signal<boolean>(false);
 
-    sheetName: string = '';
-    startRowInSheet: number = 1;
     resultDownloadVideoSignal = computed(() => resultDownloadVideoSignal());
-    videos = signal<VideoInfo[]>([]);
+    sampleVideos = signal<VideoInfo[]>([]);
+    pendingTotalVideos = signal<number>(0);
+    downloadedTotalVideos = signal<number>(0);
+    errorLinkTotalVideos = signal<number>(0);
+    seletectedSheet = signal<{ sheetName: string; sheetCode: string }>({
+        sheetCode: '',
+        sheetName: '',
+    });
+    sheets = signal<any>([]);
+    totalToDownload: number = 500;
 
     // dropdown
     isOpenDropdown = false;
-    sheetIndexSelected: string | null = null;
-    sheeNames = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
 
     constructor(
         private videoService: DownloadVideoService,
@@ -55,14 +59,23 @@ export class DownloadVideo {
         this.videoService.getRemainingVideos().subscribe({
             next: (res: any) => {
                 hideGlobalLoading();
-                if (res.data.total <= 0) {
-                    return;
-                }
-
-                this.videos.set(res.data.listVideo);
-                this.totalVideos = res.data.total;
-                this.sheetName = res.data.sheetName;
-                this.startRowInSheet = res.data.startRowInSheet;
+                this.sampleVideos.update((x) => res.data.sampleVideos);
+                this.pendingTotalVideos.update(
+                    (x) => res.data.pendingTotalVideos
+                );
+                this.downloadedTotalVideos.update(
+                    (x) => res.data.downloadedTotalVideos
+                );
+                this.errorLinkTotalVideos.update(
+                    (x) => res.data.errorLinkTotalVideos
+                );
+                this.seletectedSheet.update((x) => {
+                    return {
+                        sheetCode: res.data.selectedSheet.sheetCode,
+                        sheetName: res.data.selectedSheet.sheetName,
+                    };
+                });
+                this.sheets.update((x) => res.data.sheets);
             },
             error: (err) => {
                 hideGlobalLoading();
@@ -72,22 +85,31 @@ export class DownloadVideo {
 
     initVideos() {
         showGlobalLoading();
-        this.videoService.initVideo().subscribe({
-            next: (res: any) => {
-                showGlobalDialog('Init download', res.message, true);
-
-                this.videos.set(res.data.listNewVideo);
-                this.totalVideos = res.data.total;
-                this.sheetName = res.data.sheetName;
-
-                this.startRowInSheet = res.data.startRowInSheet;
-                hideGlobalLoading();
-            },
-            error: (err) => {
-                showGlobalDialog('Init download', err.error.message, false);
-                hideGlobalLoading();
-            },
-        });
+        this.videoService
+            .initVideo({
+                sheetName: this.seletectedSheet().sheetName,
+                sheetCode: this.seletectedSheet().sheetCode,
+            })
+            .subscribe({
+                next: (res: any) => {
+                    showGlobalDialog('Init download', res.message, true);
+                    this.sampleVideos.update((x) => res.data.sampleVideos);
+                    this.pendingTotalVideos.update(
+                        (x) => res.data.pendingTotalVideos
+                    );
+                    this.seletectedSheet.update((x) => {
+                        return {
+                            sheetCode: res.data.selectedSheet.sheetCode,
+                            sheetName: res.data.selectedSheet.sheetName,
+                        };
+                    });
+                    hideGlobalLoading();
+                },
+                error: (err) => {
+                    showGlobalDialog('Init download', err.error.message, false);
+                    hideGlobalLoading();
+                },
+            });
     }
 
     // stop
@@ -109,19 +131,24 @@ export class DownloadVideo {
 
     // download
     startDownload() {
+        if (this.totalToDownload === null || this.totalToDownload <= 0) {
+            showGlobalDialog("Total to download", "Must be positive integer", false);
+            return;
+        }
         this.updateLoading(true);
-
-        this.videoService.startDownloadVideo().subscribe({
-            next: (res: any) => {
-                if (res.data) {
-                    this.updateLoading(false);
-                }
-                showGlobalDialog('Dowload', res.message, true);
-            },
-            error: (err) => {
-                showGlobalDialog('Dowload', err.error.message, false);
-            },
-        });
+        this.videoService
+            .startDownloadVideo({ totalToDownload: this.totalToDownload })
+            .subscribe({
+                next: (res: any) => {
+                    if (res.data) {
+                        this.updateLoading(false);
+                    }
+                    showGlobalDialog('Dowload', res.message, true);
+                },
+                error: (err) => {
+                    showGlobalDialog('Dowload', err.error.message, false);
+                },
+            });
     }
 
     copyToClipboard(text: string) {
@@ -145,8 +172,14 @@ export class DownloadVideo {
         this.isOpenDropdown = !this.isOpenDropdown;
     }
 
-    selectOption(option: string) {
-        this.sheetIndexSelected = option;
+    selectOption(sheet: any) {
+        // this.sheetIndexSelected = option;
+        this.seletectedSheet.update((x) => {
+            return {
+                sheetCode: sheet.sheetCode,
+                sheetName: sheet.sheetName,
+            };
+        });
         this.isOpenDropdown = false;
     }
 }
