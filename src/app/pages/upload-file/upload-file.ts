@@ -18,12 +18,19 @@ export class UploadFile {
     uploadService = inject(UploadService);
     isAccepted = signal<boolean>(false);
 
-    onFileSelected(event: any): void {
+    onFileSelected(event: any, fileInput: HTMLInputElement): void {
         const file = event.target.files?.[0];
         if (file) {
+            const isExcel =
+                file.name.endsWith('.xls') || file.name.endsWith('.xlsx');
+            if (!isExcel) {
+                showGlobalDialog('Upload', 'Excel is invalid', false);
+                return;
+            }
             this.selectedFile = file;
             this.uploadFile(false);
         }
+        fileInput.value = '';
     }
 
     onDragOver(event: DragEvent): void {
@@ -34,11 +41,17 @@ export class UploadFile {
         event.preventDefault();
         const file = event.dataTransfer?.files?.[0];
         if (file) {
+            const isExcel =
+                file.name.endsWith('.xls') || file.name.endsWith('.xlsx');
+            if (!isExcel) {
+                showGlobalDialog('Upload', 'Excel is invalid', false);
+                return;
+            }
+
             this.selectedFile = file;
             this.uploadFile(false);
         }
     }
-
 
     uploadFile(isAccepted: boolean) {
         showGlobalLoading();

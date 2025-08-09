@@ -14,12 +14,12 @@ export class DownloadVideoService {
         return this.http.get(`${this.baseUrl}/video/GetRemainingVideos`);
     }
 
-    initVideo() {
-        return this.http.post(`${this.baseUrl}/video/InitDownloadVideo`, {});
+    initVideo(model: { sheetName: string; sheetCode: string }) {
+        return this.http.post(`${this.baseUrl}/video/InitDownloadVideo`, model);
     }
 
-    startDownloadVideo() {
-        return this.http.post(`${this.baseUrl}/video/StartDownload`, {});
+    startDownloadVideo(model: { totalToDownload: number }) {
+        return this.http.post(`${this.baseUrl}/video/StartDownload`, model);
     }
 
     stopDownloadVideo() {
