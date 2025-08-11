@@ -3,6 +3,7 @@ import { environment } from '../../../../environments/environment.development';
 import * as signalR from '@microsoft/signalr';
 import { AwsVideoDownlingStore } from '../signals/aws-video-downloading-signal';
 import { AwsVideoDownlingErrorStore } from '../signals/aws-video-downloading-error-signal';
+import { AwsVideoTotalSuccessStore } from '../signals/aws-video-total-success-signal';
 
 @Injectable({
     providedIn: 'root',
@@ -13,6 +14,7 @@ export class VideoAwsHub {
     awsVideoDownlingStore = inject(AwsVideoDownlingStore);
 
     awsVideoDownlingErrorStore = inject(AwsVideoDownlingErrorStore);
+    awsVideoTotalSuccessStore = inject(AwsVideoTotalSuccessStore);
 
     constructor() {}
 
@@ -52,6 +54,15 @@ export class VideoAwsHub {
                 });
             }
         );
+
+        this.hubConnection.on(
+            'RecieveIncreaseSucess',
+            (totalSuccess: number) => {
+                this.awsVideoTotalSuccessStore.increase(totalSuccess);
+            }
+        );
+
+        //
     }
 
     public sendMessage(user: string, message: string): void {

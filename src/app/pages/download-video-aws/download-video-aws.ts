@@ -14,6 +14,7 @@ import { showGlobalDialog } from '../../shared/signals/dialog-signal';
 import { AwsVideoDownlingStore } from './signals/aws-video-downloading-signal';
 import { VideoAwsHub } from './hubs/video-aws-hub';
 import { AwsVideoDownlingErrorStore } from './signals/aws-video-downloading-error-signal';
+import { AwsVideoTotalSuccessStore } from './signals/aws-video-total-success-signal';
 
 @Component({
     selector: 'app-download-video-aws',
@@ -25,13 +26,13 @@ export class DownloadVideoAws {
     @ViewChild('fileInput') fileInput!: ElementRef;
     selectedFile: File | null = null;
     fileName = signal<string>('no file');
-    totalDownloaded = signal<number>(0);
     totalVideo = signal<number>(0);
 
     showWarningUploadVideo = signal<boolean>(false);
     awsVideoDownlingStore = inject(AwsVideoDownlingStore);
     awsVideoDownlingErrorStore = inject(AwsVideoDownlingErrorStore);
     isDownloading = signal<boolean>(false);
+    awsVideoTotalSuccessStore = inject(AwsVideoTotalSuccessStore);
 
     constructor(
         private videoAwsService: VideoAwsService,
@@ -73,7 +74,9 @@ export class DownloadVideoAws {
         this.videoAwsService.uploadVideo(formData).subscribe({
             next: (res: any) => {
                 this.fileName.set(res.data.fileName);
-                this.totalDownloaded.set(res.data.totalDownloaded);
+                this.awsVideoTotalSuccessStore.increase(
+                    res.data.totalDownloaded
+                );
                 this.totalVideo.set(res.data.totalVideo);
 
                 hideGlobalLoading();
@@ -92,7 +95,10 @@ export class DownloadVideoAws {
         this.videoAwsService.getRemaining().subscribe({
             next: (res: any) => {
                 this.fileName.set(res.data.fileName);
-                this.totalDownloaded.set(res.data.totalDownloaded);
+
+                this.awsVideoTotalSuccessStore.increase(
+                    res.data.totalDownloaded
+                );
                 this.totalVideo.set(res.data.totalVideo);
                 hideGlobalLoading();
             },
