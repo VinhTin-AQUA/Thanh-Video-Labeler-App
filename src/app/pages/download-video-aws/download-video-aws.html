@@ -68,12 +68,17 @@
                     Start Download
                 </button>
                 } @else {
-                <button
-                    (click)="stopDownload()"
-                    class="text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-2"
-                >
-                    Stop Download
-                </button>
+                <div class="flex items-center gap-2">
+                    <button
+                        (click)="stopDownload()"
+                        class="text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg mb-2"
+                    >
+                        Stop Download
+                    </button>
+                    <div class="">
+                        <span class="loader"></span>
+                    </div>
+                </div>
                 }
 
                 <div class="grid grid-col-1 gap-2 mb-5">
